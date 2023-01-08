@@ -1,33 +1,37 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading;
-using System.Threading.Tasks;
 
 public static class PrimeFinderUsingThread
 {
-    public static Task<int[]> FindPrimesAsyncUsingThread(int k)
+    public static ConcurrentBag<int> FindPrimesAsyncUsingThread(int k)
     {
-        var tcs = new TaskCompletionSource<int[]>();
-        var primesThread = new ConcurrentBag<int>();
-        ThreadPool.QueueUserWorkItem(state =>
+        var bag = new ConcurrentBag<int>();
+        var thread = new Thread(() =>
         {
             for (int i = 2; i <= k; i++)
             {
-                bool isPrime = true;
-                for (int j = 2; j < i; j++)
+                if (IsPrime(i))
                 {
-                    if (i % j == 0)
-                    {
-                        isPrime = false;
-                        break;
-                    }
-                }
-                if (isPrime)
-                {
-                    primesThread.Add(i);
+                    bag.Add(i);
                 }
             }
-            tcs.SetResult(primesThread.ToArray());
         });
-        return tcs.Task;
+        thread.Start();
+        thread.Join();
+        return bag;
+    }
+
+    private static bool IsPrime(int number)
+    {
+        if (number < 2) return false;
+        if (number == 2) return true;
+        if (number % 2 == 0) return false;
+
+        for (int i = 3; i <= Math.Sqrt(number); i += 2)
+        {
+            if (number % i == 0) return false;
+        }
+
+        return true;
     }
 }

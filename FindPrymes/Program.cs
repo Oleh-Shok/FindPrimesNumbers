@@ -24,7 +24,7 @@ foreach (int primeNumberTask in primesTask)
 
 // Thread method
 int k = 100;
-var primesThread = await PrimeFinderUsingThread.FindPrimesAsyncUsingThread(k);
+var primesThread = PrimeFinderUsingThread.FindPrimesAsyncUsingThread(k);
 
 Console.WriteLine("Prime numbers using realization Thread from 1 to " + k + ":");
 foreach (int primeNumberThread in primesThread)
