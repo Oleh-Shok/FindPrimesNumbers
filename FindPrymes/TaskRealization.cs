@@ -4,22 +4,31 @@ using System.Collections.Generic;
 
 public static class PrimeFinderUsingTask
 {
-    public static async Task<int[]> FindPrimesAsyncUsingTask(int n)
+    public static async Task<List<int>> FindPrimesAsyncUsingTask(int m)
     {
-        var primesTask = new ConcurrentBag<int>();
+        var tasks = new List<Task<List<int>>>();
+        var segmentSize = 100;
+        for (var i = 2; i < m; i += segmentSize)
+        {
+            var segmentStart = i;
+            var segmentEnd = Math.Min(i + segmentSize, m);
+            tasks.Add(Task.Run(() => FindPrimesInRange(segmentStart, segmentEnd)));
+        }
+        var results = await Task.WhenAll(tasks);
+        return results.SelectMany(x => x).ToList();
+    }
+
+    private static List<int> FindPrimesInRange(int start, int end)
+    {
+        var primes = new List<int>();
         IsPrimeCheck checker = new IsPrimeCheck();
-
-        await Task.WhenAll(
-            Enumerable.Range(2, n - 1).Select(i =>
+        for (var i = start; i < end; i++)
+        {
+            if (checker.IsPrime(i))
             {
-                if (checker.IsPrime(i))
-                {
-                    primesTask.Add(i);
-                }
-                return Task.CompletedTask;
-            })
-        );
-
-        return primesTask.ToArray();
+                primes.Add(i);
+            }
+        }
+        return primes;
     }
 }
