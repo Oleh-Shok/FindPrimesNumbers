@@ -8,6 +8,7 @@ public static class PrimeFinderUsingThread
         var bag = new ConcurrentBag<int>();
         var threads = new List<Thread>();
         var numbersPerThread = (k - 2) / Environment.ProcessorCount;
+        IsPrimeCheck checker = new IsPrimeCheck();
         for (int i = 2; i <= k; i += numbersPerThread)
         {
             int start = i;
@@ -18,7 +19,7 @@ public static class PrimeFinderUsingThread
             {
                 for (int j = start; j <= end; j++)
                 {
-                    if (IsPrime(j))
+                    if (checker.IsPrime(j))
                     {
                         bag.Add(j);
                     }
@@ -34,20 +35,5 @@ public static class PrimeFinderUsingThread
         }
 
         return bag;
-    }
-
-
-    private static bool IsPrime(int number)
-    {
-        if (number < 2) return false;
-        if (number == 2) return true;
-        if (number % 2 == 0) return false;
-
-        for (int i = 3; i <= Math.Sqrt(number); i += 2)
-        {
-            if (number % i == 0) return false;
-        }
-
-        return true;
     }
 }

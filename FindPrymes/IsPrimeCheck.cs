@@ -1,6 +1,6 @@
-﻿public static class IsPrimeCheck
+﻿public class IsPrimeCheck
 {
-    public static bool IsPrime(int number)
+    public bool IsPrime(int number)
     {
         if (number < 2) return false;
         if (number == 2) return true;
